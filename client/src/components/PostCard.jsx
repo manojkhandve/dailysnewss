@@ -2,6 +2,32 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export default function PostCard({ post }) {
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: post.title,
+          text: `Check out this post: ${post.title}`,
+          url: `${window.location.origin}/post/${post.slug}`,
+          // Optionally include files
+          files: [new File([post.image], 'image.jpg', { type: 'image/jpeg' })]
+        });
+        console.log('Post shared successfully');
+      } catch (err) {
+        console.error('Error sharing the post:', err);
+      }
+    } else {
+      console.log('Web Share API not supported');
+      // Fallback to copying link or other sharing method
+      const shareUrl = `${window.location.origin}/post/${post.slug}`;
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Link copied to clipboard');
+      } catch (err) {
+        console.error('Failed to copy the link:', err);
+      }
+    }
+  };
   const navigate = useNavigate();
 
   // Function to increment view count
@@ -33,7 +59,8 @@ export default function PostCard({ post }) {
       />
       <div className='p-3 flex flex-col gap-2'>
         <p className='text-lg font-semibold line-clamp-2'>{post.title}</p>
-        <span className='italic text-sm'>{post.category}</span>
+        <span className='italic text-sm'>{post.category}</span
+        <button onClick={handleShare} className='bg-blue-500'>Share</button>
         <Link
           to={`/post/${post.slug}`}
           className='z-10 group-hover:bottom-0 absolute bottom-[-200px] left-0 right-0 border border-teal-500 text-teal-500 hover:bg-teal-500 hover:text-white transition-all duration-300 text-center py-2 rounded-md !rounded-tl-none m-2'
