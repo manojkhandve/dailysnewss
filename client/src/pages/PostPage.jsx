@@ -12,6 +12,33 @@ export default function PostPage() {
   const [post, setPost] = useState(null);
   const [recentPosts, setRecentPosts] = useState(null);
 
+   const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: post.title,
+          text: `Check out this post: ${post.title}`,
+          url: `${window.location.origin}/post/${post.slug}`,
+          // Optionally include files
+          files: [new File([post.image], 'image.jpg', { type: 'image/jpeg' })]
+        });
+        console.log('Post shared successfully');
+      } catch (err) {
+        console.error('Error sharing the post:', err);
+      }
+    } else {
+      console.log('Web Share API not supported');
+      // Fallback to copying link or other sharing method
+      const shareUrl = `${window.location.origin}/post/${post.slug}`;
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        alert('Link copied to clipboard');
+      } catch (err) {
+        console.error('Failed to copy the link:', err);
+      }
+    }
+  };
+
   useEffect(() => {
     const fetchPost = async () => {
       try {
@@ -77,10 +104,11 @@ export default function PostPage() {
           {post && post.views} views
         </span>
       </div>
+     <button onClick={handleShare} className='bg-blue-500 mt-4'>Share</button>
       <img
         src={post && post.image}
         alt={post && post.title}
-        className='mt-10 p-3 max-h-[600px] w-full object-cover'
+        className='mt-8 p-3 max-h-[600px] w-full object-cover'
       />
       <div className='flex justify-between p-3 border-b border-slate-500 mx-auto w-full max-w-2xl text-xs'>
         <span>{post && new Date(post.createdAt).toLocaleDateString()}</span>
