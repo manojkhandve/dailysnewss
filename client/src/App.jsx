@@ -16,14 +16,12 @@ import UpdatePost from './pages/UpdatePost';
 import PostPage from './pages/PostPage';
 import ScrollToTop from './components/ScrollToTop';
 import Search from './pages/Search';
-import AdSense from './components/Adsense';
 
 export default function App() {
   return (
     <BrowserRouter>
       <ScrollToTop />
       <Header />
-      <AdSense/>
       <Routes>
         <Route path='/' element={<Home />} />
         <Route path='/about' element={<About />} />
