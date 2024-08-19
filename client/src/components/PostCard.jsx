@@ -2,6 +2,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useEffect } from 'react';
 
 export default function PostCard({ post }) {
+
   const handleShare = async () => {
     if (navigator.share) {
       try {
@@ -28,6 +29,7 @@ export default function PostCard({ post }) {
       }
     }
   };
+  
   const navigate = useNavigate();
 
   // Function to increment view count
@@ -59,7 +61,7 @@ export default function PostCard({ post }) {
       />
       <div className='p-3 flex flex-col gap-2'>
         <p className='text-lg font-semibold line-clamp-2'>{post.title}</p>
-        <span className='italic text-sm'>{post.category}</span
+        <span className='italic text-sm'>{post.category}</span>
         <button onClick={handleShare} className='bg-blue-500'>Share</button>
         <Link
           to={`/post/${post.slug}`}
