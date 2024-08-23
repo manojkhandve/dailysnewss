@@ -1,3 +1,4 @@
+import { useRef } from 'react';
 import { Avatar, Button, Dropdown, Navbar, TextInput } from 'flowbite-react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { AiOutlineSearch } from 'react-icons/ai';
@@ -8,13 +9,15 @@ import { signoutSuccess } from '../redux/user/userSlice';
 import { useEffect, useState } from 'react';
 
 export default function Header() {
-  const path = useLocation().pathname;
   const location = useLocation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { currentUser } = useSelector((state) => state.user);
   const { theme } = useSelector((state) => state.theme);
   const [searchTerm, setSearchTerm] = useState('');
+  const [isSearchPageOpen, setIsSearchPageOpen] = useState(location.pathname === '/search');
+
+  const navbarToggleRef = useRef(null);
 
   // Update searchTerm from URL on mount
   useEffect(() => {
@@ -23,7 +26,8 @@ export default function Header() {
     if (searchTermFromUrl) {
       setSearchTerm(searchTermFromUrl);
     }
-  }, [location.search]);
+    setIsSearchPageOpen(location.pathname === '/search');
+  }, [location]);
 
   // Handle signout
   const handleSignout = async () => {
@@ -52,6 +56,30 @@ export default function Header() {
     navigate(`/search?${urlParams.toString()}`);
   };
 
+  // Toggle search page visibility
+  const handleSearchToggle = () => {
+    if (isSearchPageOpen) {
+      navigate('/');
+      setIsSearchPageOpen(false);
+    } else {
+      navigate('/search');
+      setIsSearchPageOpen(true);
+    }
+  };
+
+  // Close Navbar on link click
+  const handleNavLinkClick = () => {
+    if (navbarToggleRef.current) {
+      navbarToggleRef.current.click(); // This toggles the navbar to close
+    }
+  };
+
+  // Handle link clicks with specific navigation and closing
+  const handleLinkClick = (path) => {
+    navigate(path);
+    handleNavLinkClick();
+  };
+
   return (
     <Navbar className='border-b-2'>
       <Link
@@ -73,7 +101,8 @@ export default function Header() {
           onChange={(e) => setSearchTerm(e.target.value)}
         />
         <Button
-          type='submit'
+          type='button'
+          onClick={handleSearchToggle}
           className='w-12 h-10 lg:hidden'
           color='gray'
           pill
@@ -117,17 +146,32 @@ export default function Header() {
             </Button>
           </Link>
         )}
-        <Navbar.Toggle />
+        <Navbar.Toggle ref={navbarToggleRef} />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link active={path === '/'} as={'div'}>
-          <Link to='/'>Home</Link>
+        <Navbar.Link
+          active={location.pathname === '/'}
+          as={'div'}
+          onClick={() => handleLinkClick('/')}
+          role="button"
+        >
+          Home
         </Navbar.Link>
-        <Navbar.Link active={path === '/about'} as={'div'}>
-          <Link to='/about'>About</Link>
+        <Navbar.Link
+          active={location.pathname === '/about'}
+          as={'div'}
+          onClick={() => handleLinkClick('/about')}
+          role="button"
+        >
+          About
         </Navbar.Link>
-        <Navbar.Link active={path === '/projects'} as={'div'}>
-          <Link to='/projects'>Projects</Link>
+        <Navbar.Link
+          active={location.pathname === '/projects'}
+          as={'div'}
+          onClick={() => handleLinkClick('/projects')}
+          role="button"
+        >
+          Projects
         </Navbar.Link>
       </Navbar.Collapse>
     </Navbar>
