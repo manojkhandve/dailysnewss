@@ -16,7 +16,7 @@ import UpdatePost from './pages/UpdatePost';
 import PostPage from './pages/PostPage';
 import ScrollToTop from './components/ScrollToTop';
 import Search from './pages/Search';
-
+import Adsense from './components/Adsense';
 export default function App() {
   return (
     <BrowserRouter>
@@ -41,6 +41,10 @@ export default function App() {
         <Route path='/projects' element={<Projects />} />
         <Route path='/post/:postSlug' element={<PostPage />} />
       </Routes>
+      <Adsense
+      client="ca-pub-4869219856930437" 
+      slot="3215122285"               
+      style={{ display: 'block', textAlign: 'center'}} />
       <Footer />
     </BrowserRouter>
   );
